@@ -1,0 +1,7 @@
+package com.kodlamaio.inventoryService.business.responses.update;
+
+public class UpdateCarStateResponse {
+	private String id;
+	private String modelName;
+	private int state;
+}
