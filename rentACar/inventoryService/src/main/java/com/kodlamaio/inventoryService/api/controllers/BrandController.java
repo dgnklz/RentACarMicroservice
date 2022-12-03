@@ -36,12 +36,12 @@ public class BrandController {
 		return brandService.add(createRequest);
 	}
 
-	@PutMapping
+	@PutMapping("/update")
 	public UpdateBrandResponse update(@RequestBody UpdateBrandRequest updateRequest) {
 		return brandService.update(updateRequest);
 	}
 
-	@DeleteMapping("/{id}")
+	@DeleteMapping("delete/{id}")
 	public void delete(@PathVariable String id) {
 		brandService.delete(id);
 	}

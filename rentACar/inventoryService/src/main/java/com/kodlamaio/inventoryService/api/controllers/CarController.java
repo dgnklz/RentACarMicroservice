@@ -26,23 +26,29 @@ import lombok.AllArgsConstructor;
 public class CarController {
 	private CarService carService;
 	
-	@GetMapping
+	@GetMapping("/get")
 	public List<GetAllCarsResponse> getAll() {
 		return carService.getAll();
 	}
 	
-	@PostMapping
+	@PostMapping("/add")
 	public CreateCarResponse add(@RequestBody CreateCarRequest createRequest) {
 		return carService.add(createRequest);
 	}
 	
-	@PutMapping
+	@PutMapping("/update")
 	public UpdateCarResponse update(@RequestBody UpdateCarRequest updateRequest) {
 		return carService.update(updateRequest);
 	}
 	
-	@DeleteMapping("/{id}")
+	@DeleteMapping("delete/{id}")
 	public void delete(@PathVariable String id) {
 		carService.delete(id);
 	}
+	
+	@GetMapping("/get/{id}")
+	public void checkIfCarAvailable(@PathVariable String id) {
+		carService.checkIfCarAvailable(id);
+	}
+	
 }

@@ -8,14 +8,15 @@ import com.kodlamaio.inventoryService.business.responses.create.CreateBrandRespo
 import com.kodlamaio.inventoryService.business.responses.get.GetAllBrandsResponse;
 import com.kodlamaio.inventoryService.business.responses.get.GetBrandResponse;
 import com.kodlamaio.inventoryService.business.responses.update.UpdateBrandResponse;
+import com.kodlamaio.inventoryService.entities.Brand;
 
 public interface BrandService {
 	List<GetAllBrandsResponse> getAll();
 	GetBrandResponse getBrandById(String id);
-	public GetBrandResponse getBrandByName(String name);
+	GetBrandResponse getBrandByName(String name);
 	CreateBrandResponse add(CreateBrandRequest createRequest);
 	UpdateBrandResponse update(UpdateBrandRequest updateRequest);
 	void delete(String id);
 	
-	/// Public Rules \\\
+	public Brand getBrandNameByBrandId(String id);
 }

@@ -29,39 +29,58 @@ public class BrandManager implements BrandService {
 	@Override
 	public List<GetAllBrandsResponse> getAll() {
 		List<Brand> brands = brandRepository.findAll();
-		return brands.stream().map(brand -> modelMapperService.forResponse().map(brand, GetAllBrandsResponse.class))
+		List<GetAllBrandsResponse> responses = brands.stream().map(brand -> modelMapperService.forResponse().map(brand, GetAllBrandsResponse.class))
 				.toList();
+		return responses;
 	}
 
 	@Override
 	public GetBrandResponse getBrandById(String id) {
 		checkIfBrandExistsById(id);
+		
 		Brand brand = brandRepository.findById(id).get();
-		return modelMapperService.forResponse().map(brand, GetBrandResponse.class);
+		
+		GetBrandResponse response = modelMapperService.forResponse().map(brand, GetBrandResponse.class);
+		return response;
 	}
 
 	@Override
 	public GetBrandResponse getBrandByName(String name) {
 		checkIfBrandExistsByName(name);
+		
 		Brand brand = brandRepository.findByName(name);
-		return modelMapperService.forResponse().map(brand, GetBrandResponse.class);
+		
+		GetBrandResponse response = modelMapperService.forResponse().map(brand, GetBrandResponse.class);
+		return response;
+	}
+	
+	public Brand getBrandNameByBrandId(String id) {
+		checkIfBrandExistsById(id);
+		
+		Brand brand = brandRepository.findById(id).orElse(null);
+		
+		return brand;
 	}
 
 	@Override
 	public CreateBrandResponse add(CreateBrandRequest createRequest) {
 		Brand brand = modelMapperService.forRequest().map(createRequest, Brand.class);
-		System.out.println(createRequest.getName());
 		brand.setId(UUID.randomUUID().toString());
 		brandRepository.save(brand);
-		return modelMapperService.forResponse().map(brand, CreateBrandResponse.class);
+		
+		CreateBrandResponse response = modelMapperService.forResponse().map(brand, CreateBrandResponse.class);
+		return response;
 	}
 
 	@Override
 	public UpdateBrandResponse update(UpdateBrandRequest updateRequest) {
 		checkIfBrandExistsById(updateRequest.getId());
+		
 		Brand brand = modelMapperService.forRequest().map(updateRequest, Brand.class);
 		brandRepository.save(brand);
-		return modelMapperService.forResponse().map(brand, UpdateBrandResponse.class);
+		
+		UpdateBrandResponse response = modelMapperService.forResponse().map(brand, UpdateBrandResponse.class);
+		return response;
 	}
 
 	@Override

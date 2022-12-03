@@ -26,22 +26,22 @@ import lombok.AllArgsConstructor;
 public class ModelController {
 	private ModelService modelService;
 	
-	@GetMapping
+	@GetMapping("/get")
 	public List<GetAllModelsResponse> getAll() {
 		return modelService.getAll();
 	}
 	
-	@PostMapping
+	@PostMapping("/add")
 	public CreateModelResponse add(@RequestBody CreateModelRequest createRequest) {
 		return modelService.add(createRequest);
 	}
 	
-	@PutMapping
+	@PutMapping("/update")
 	public UpdateModelResponse update(@RequestBody UpdateModelRequest updateRequest) {
 		return modelService.update(updateRequest);
 	}
 	
-	@DeleteMapping("/{id}")
+	@DeleteMapping("delete/{id}")
 	public void delete(@PathVariable String id) {
 		modelService.delete(id);
 	}

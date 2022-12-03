@@ -8,7 +8,6 @@ import com.kodlamaio.inventoryService.business.responses.create.CreateCarRespons
 import com.kodlamaio.inventoryService.business.responses.get.GetAllCarsResponse;
 import com.kodlamaio.inventoryService.business.responses.get.GetCarResponse;
 import com.kodlamaio.inventoryService.business.responses.update.UpdateCarResponse;
-import com.kodlamaio.inventoryService.business.responses.update.UpdateCarStateResponse;
 
 public interface CarService {
 	List<GetAllCarsResponse> getAll();
@@ -17,8 +16,10 @@ public interface CarService {
 	UpdateCarResponse update(UpdateCarRequest updateRequest);
 	void delete(String id);
 	
-	UpdateCarStateResponse updateCarState(String id);
+	void checkIfCarAvailable(String id);
 	
+	public void updateCarStateForRentalCreate(String id);
+	public void updateCarStateForRentalUpdate(String oldCarId, String newCarId);
 	/// Public Rules \\\
 	
 }

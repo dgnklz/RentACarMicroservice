@@ -8,6 +8,7 @@ import com.kodlamaio.inventoryService.business.responses.create.CreateModelRespo
 import com.kodlamaio.inventoryService.business.responses.get.GetAllModelsResponse;
 import com.kodlamaio.inventoryService.business.responses.get.GetModelResponse;
 import com.kodlamaio.inventoryService.business.responses.update.UpdateModelResponse;
+import com.kodlamaio.inventoryService.entities.Model;
 
 public interface ModelService {
 	List<GetAllModelsResponse> getAll();
@@ -16,6 +17,6 @@ public interface ModelService {
 	UpdateModelResponse update(UpdateModelRequest updateRequest);
 	void delete(String id);
 	
-	/// Public Rules \\\
+	Model getModelNameByModelId(String id);
 	
 }

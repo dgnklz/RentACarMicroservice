@@ -17,6 +17,7 @@ import com.kodlamaio.inventoryService.business.responses.get.GetAllModelsRespons
 import com.kodlamaio.inventoryService.business.responses.get.GetModelResponse;
 import com.kodlamaio.inventoryService.business.responses.update.UpdateModelResponse;
 import com.kodlamaio.inventoryService.dataAccess.ModelRepository;
+import com.kodlamaio.inventoryService.entities.Brand;
 import com.kodlamaio.inventoryService.entities.Model;
 
 import lombok.AllArgsConstructor;
@@ -31,33 +32,54 @@ public class ModelManager implements ModelService{
 	@Override
 	public List<GetAllModelsResponse> getAll() {
 		List<Model> models = modelRepository.findAll();
-		return models.stream().map(model -> modelMapperService.forResponse()
+		List<GetAllModelsResponse> responses = models.stream().map(model -> modelMapperService.forResponse()
 				.map(model, GetAllModelsResponse.class))
-					.toList();
+				.toList();
+		return responses;
 	}
 	
 	@Override
 	public GetModelResponse getModelById(String id) {
 		checkIfModelExistsById(id);
 		Model model = modelRepository.findById(id).get();
-		return modelMapperService.forResponse().map(model, GetModelResponse.class);
+		
+		GetModelResponse response = modelMapperService.forResponse().map(model, GetModelResponse.class);
+		return response;
+	}
+	
+	public Model getModelNameByModelId(String id) {
+		checkIfModelExistsById(id);
+		
+		Model model = modelRepository.findById(id).orElse(null);
+		
+		return model;
 	}
 
 	@Override
 	public CreateModelResponse add(CreateModelRequest createRequest) {
 		checkIfBrandExistById(createRequest.getBrandId());
+		
 		Model model = modelMapperService.forRequest().map(createRequest, Model.class);
 		model.setId(UUID.randomUUID().toString());
 		modelRepository.save(model);
-		return modelMapperService.forResponse().map(model, CreateModelResponse.class);
+		
+		CreateModelResponse response = modelMapperService.forResponse().map(model, CreateModelResponse.class);
+		Brand brand = brandService.getBrandNameByBrandId(model.getBrand().getId());
+		response.setBrandName(brand.getName());
+		return response;
 	}
 
 	@Override
 	public UpdateModelResponse update(UpdateModelRequest updateRequest) {
 		checkIfModelExistsById(updateRequest.getId());
+		
 		Model model = modelMapperService.forRequest().map(updateRequest, Model.class);
 		modelRepository.save(model);
-		return modelMapperService.forResponse().map(model, UpdateModelResponse.class);
+		
+		UpdateModelResponse response = modelMapperService.forResponse().map(model, UpdateModelResponse.class);
+		Brand brand = brandService.getBrandNameByBrandId(model.getBrand().getId());
+		response.setBrandName(brand.getName());
+		return response;
 	}
 
 	@Override
