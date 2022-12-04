@@ -16,7 +16,6 @@ import com.kodlamaio.paymentService.business.responses.get.GetAllPaymentResponse
 import com.kodlamaio.paymentService.business.responses.update.UpdatePaymentResponse;
 import com.kodlamaio.paymentService.dataAccess.PaymentRepository;
 import com.kodlamaio.paymentService.entities.Payment;
-import com.kodlamaio.rentalService.business.constants.MessagesForRental;
 
 import lombok.AllArgsConstructor;
 

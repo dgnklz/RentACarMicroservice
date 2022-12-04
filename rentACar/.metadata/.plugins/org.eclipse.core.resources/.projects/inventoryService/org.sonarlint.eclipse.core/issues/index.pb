@@ -87,17 +87,7 @@ p
 @src/main/java/com/kodlamaio/inventoryService/entities/Model.java,1\9\19bdcd9dbdaaefd6ab9ab11e930e6aa5f181c68e
 v
 Fsrc/main/java/com/kodlamaio/inventoryService/kafka/RentalConsumer.java,c\4\c46c7c7c60f48e6641203229fb1b16d0468651ba
-’
-bsrc/main/java/com/kodlamaio/inventoryService/business/responses/update/UpdateCarStateResponse.java,3\d\3d650820d8d098f1ae935dd96c057bc31278fff1
-™
-isrc/main/java/com/kodlamaio/inventoryService/business/responses/update/updateCarStateForRentalCreate.java,e\c\ecae7bbf4b0dd8c687c872251a8452580543e1d7
 ¡
 qsrc/main/java/com/kodlamaio/inventoryService/business/responses/update/UpdateCarStateForRentalCreateResponse.java,8\9\893cd07e3e3c69aa33fd82ee01213655b503c662
 ¡
 qsrc/main/java/com/kodlamaio/inventoryService/business/responses/update/UpdateCarStateForRentalUpdateResponse.java,e\4\e404dbf526b96226510d703e2bc48c7234ee9165
-w
-Gsrc/main/java/com/kodlamaio/inventoryService/feign/CarStateService.java,b\1\b1b7b4e77d2e8894e1541f1f174eb5b98f2c2679
-r
-Bsrc/main/java/com/kodlamaio/inventoryService/feign/CarService.java,0\c\0c1244f9a758f436b50e118e9b40b5f06759430a
-
-Osrc/main/java/com/kodlamaio/inventoryService/kafka/RentalConsumerForUpdate.java,0\c\0c95d8cf537079bb8f3f3f8f6b14377832d49ab0

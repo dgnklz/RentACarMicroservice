@@ -16,9 +16,11 @@ import com.kodlamaio.inventoryService.business.responses.create.CreateCarRespons
 import com.kodlamaio.inventoryService.business.responses.get.GetAllCarsResponse;
 import com.kodlamaio.inventoryService.business.responses.get.GetCarResponse;
 import com.kodlamaio.inventoryService.business.responses.update.UpdateCarResponse;
+import com.kodlamaio.inventoryService.dataAccess.CarDetailRepository;
 import com.kodlamaio.inventoryService.dataAccess.CarRepository;
 import com.kodlamaio.inventoryService.entities.Car;
 import com.kodlamaio.inventoryService.entities.Model;
+import com.kodlamaio.inventoryService.entities.dtos.CarDetailDto;
 
 import lombok.AllArgsConstructor;
 
@@ -26,6 +28,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class CarManager implements CarService{
 	private CarRepository carRepository;
+	private CarDetailRepository carDetailRepository;
 	private ModelMapperService modelMapperService;
 	private ModelService modelService;
 
@@ -54,19 +57,27 @@ public class CarManager implements CarService{
 		
 		Car car = modelMapperService.forRequest().map(createRequest, Car.class);
 		car.setId(UUID.randomUUID().toString());
+		car.setState(2);
 		carRepository.save(car);
 		
 		CreateCarResponse response = modelMapperService.forResponse().map(car, CreateCarResponse.class);
 		Model model = modelService.getModelNameByModelId(car.getModel().getId());
 		response.setModelName(model.getName());
+		
+		CarDetailDto carDetailDto = modelMapperService.forRequest().map(createRequest, CarDetailDto.class);
+		carDetailRepository.save(carDetailDto);
+		
 		return response;
 	}
 
 	@Override
 	public UpdateCarResponse update(UpdateCarRequest updateRequest) {
 		checkIfCarExistsById(updateRequest.getId());
+		checkIfModelExistById(updateRequest.getModelId());
+		checkIfPlateExists(updateRequest.getPlate());
 		
 		Car car = modelMapperService.forRequest().map(updateRequest, Car.class);
+		car.setState(2);
 		carRepository.save(car);
 		
 		UpdateCarResponse response = modelMapperService.forResponse().map(car, UpdateCarResponse.class);
