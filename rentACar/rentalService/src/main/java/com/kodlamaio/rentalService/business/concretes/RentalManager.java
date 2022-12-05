@@ -9,7 +9,7 @@ import com.kodlamaio.common.events.RentalCreatedEvent;
 import com.kodlamaio.common.events.RentalUpdatedEvent;
 import com.kodlamaio.common.utilities.exceptions.BusinessException;
 import com.kodlamaio.common.utilities.mapping.ModelMapperService;
-import com.kodlamaio.rentalService.business.abstracts.CarClientService;
+import com.kodlamaio.rentalService.api.controllers.CarClientService;
 import com.kodlamaio.rentalService.business.abstracts.RentalService;
 import com.kodlamaio.rentalService.business.constants.MessagesForRental;
 import com.kodlamaio.rentalService.business.requests.create.CreateRentalRequest;
@@ -97,6 +97,21 @@ public class RentalManager implements RentalService{
 	public void delete(String id) {
 		checkIfRentalExistById(id);
 		rentalRepository.deleteById(id);
+	}
+	
+	@Override
+	public double getTotalPrice(String id) {
+		return rentalRepository.findById(id).get().getTotalPrice();
+	}
+	
+	@Override
+	public void setConditionByPayment(String id) {
+		Rental rental = this.rentalRepository.findById(id).get();
+		if (rental.getCondition()==1) {
+			rental.setCondition(2);	
+		}
+		rentalRepository.save(rental);
+		
 	}
 	
 	/// Private Rules \\\

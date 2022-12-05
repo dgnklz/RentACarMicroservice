@@ -1,4 +1,4 @@
-package com.kodlamaio.rentalService.business.abstracts;
+package com.kodlamaio.rentalService.api.controllers;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;

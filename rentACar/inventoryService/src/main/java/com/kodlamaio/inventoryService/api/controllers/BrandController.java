@@ -2,6 +2,8 @@ package com.kodlamaio.inventoryService.api.controllers;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,12 +34,12 @@ public class BrandController {
 	}
 
 	@PostMapping("/add")
-	public CreateBrandResponse add(@RequestBody CreateBrandRequest createRequest) {
+	public CreateBrandResponse add(@Valid @RequestBody CreateBrandRequest createRequest) {
 		return brandService.add(createRequest);
 	}
 
 	@PutMapping("/update")
-	public UpdateBrandResponse update(@RequestBody UpdateBrandRequest updateRequest) {
+	public UpdateBrandResponse update(@Valid @RequestBody UpdateBrandRequest updateRequest) {
 		return brandService.update(updateRequest);
 	}
 

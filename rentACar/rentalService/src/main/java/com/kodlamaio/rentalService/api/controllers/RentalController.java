@@ -2,6 +2,8 @@ package com.kodlamaio.rentalService.api.controllers;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,12 +34,12 @@ public class RentalController {
 	}
 	
 	@PostMapping("/add")
-	public CreateRentalResponse add(@RequestBody CreateRentalRequest createRequest) {
+	public CreateRentalResponse add(@Valid @RequestBody CreateRentalRequest createRequest) {
 		return rentalService.add(createRequest);
 	}
 	
 	@PutMapping("/update")
-	UpdateRentalResponse update(@RequestBody UpdateRentalRequest updateRequest) {
+	UpdateRentalResponse update(@Valid @RequestBody UpdateRentalRequest updateRequest) {
 		return rentalService.update(updateRequest);
 	}
 	
@@ -45,5 +47,10 @@ public class RentalController {
 	@DeleteMapping("delete/{id}")
 	void delete(@PathVariable String id) {
 		rentalService.delete(id);
+	}
+	
+	@GetMapping("/get/totalpricebyid/{id}")
+	public double getTotalPrice(@PathVariable String id) {
+		return rentalService.getTotalPrice(id);
 	}
 }
