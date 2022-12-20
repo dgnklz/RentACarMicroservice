@@ -9,7 +9,7 @@ import feign.Headers;
 
 @FeignClient(value = "CarClient", url = "http://localhost:9011")
 public interface CarClientService{
-	@RequestMapping(method = RequestMethod.GET, value = "/stock/api/cars/get/{id}")
+	@RequestMapping(method = RequestMethod.GET, value = "/stock/api/cars/get/checkState/{id}")
 	@Headers(value = "Content-Type: application/json")
-	Object getCar(@PathVariable String id);
+	void checkIfCarAvailable(@PathVariable String id);
 }

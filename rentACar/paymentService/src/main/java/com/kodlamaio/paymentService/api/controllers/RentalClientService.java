@@ -12,5 +12,4 @@ public interface RentalClientService {
 	@RequestMapping(method= RequestMethod.GET ,value = "/rental/api/rentals/get/totalpricebyid/{rentalId}")
 	@Headers(value="Content-Type: application/json")
 	double getTotalPrice(@PathVariable String rentalId);
-	
 }

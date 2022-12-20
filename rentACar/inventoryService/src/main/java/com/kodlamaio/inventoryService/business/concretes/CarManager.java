@@ -5,6 +5,9 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
+import com.kodlamaio.common.events.filter.car.CarCreatedEvent;
+import com.kodlamaio.common.events.filter.car.CarDeletedEvent;
+import com.kodlamaio.common.events.filter.car.CarUpdatedEvent;
 import com.kodlamaio.common.utilities.exceptions.BusinessException;
 import com.kodlamaio.common.utilities.mapping.ModelMapperService;
 import com.kodlamaio.inventoryService.business.abstracts.CarService;
@@ -16,11 +19,10 @@ import com.kodlamaio.inventoryService.business.responses.create.CreateCarRespons
 import com.kodlamaio.inventoryService.business.responses.get.GetAllCarsResponse;
 import com.kodlamaio.inventoryService.business.responses.get.GetCarResponse;
 import com.kodlamaio.inventoryService.business.responses.update.UpdateCarResponse;
-import com.kodlamaio.inventoryService.dataAccess.CarDetailRepository;
 import com.kodlamaio.inventoryService.dataAccess.CarRepository;
 import com.kodlamaio.inventoryService.entities.Car;
 import com.kodlamaio.inventoryService.entities.Model;
-import com.kodlamaio.inventoryService.entities.dtos.CarDetailDto;
+import com.kodlamaio.inventoryService.kafka.InventoryProducer;
 
 import lombok.AllArgsConstructor;
 
@@ -28,9 +30,9 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class CarManager implements CarService{
 	private CarRepository carRepository;
-	private CarDetailRepository carDetailRepository;
 	private ModelMapperService modelMapperService;
 	private ModelService modelService;
+	private InventoryProducer inventoryProducer;
 
 	@Override
 	public List<GetAllCarsResponse> getAll() {
@@ -53,32 +55,38 @@ public class CarManager implements CarService{
 	@Override
 	public CreateCarResponse add(CreateCarRequest createRequest) {
 		checkIfPlateExists(createRequest.getPlate());
-		checkIfModelExistById(createRequest.getModelId());
+		checkIfModelExistsById(createRequest.getModelId());
 		
 		Car car = modelMapperService.forRequest().map(createRequest, Car.class);
 		car.setId(UUID.randomUUID().toString());
-		car.setState(2);
-		carRepository.save(car);
+		Car result = carRepository.save(car);
+		
+		CarCreatedEvent carCreatedEvent = this.modelMapperService.forRequest().map(result, CarCreatedEvent.class);
+		carCreatedEvent.setId(result.getId());
+		carCreatedEvent.setModelId(result.getModel().getId());
+		carCreatedEvent.setModelName(result.getModel().getName());
+		carCreatedEvent.setBrandId(result.getModel().getBrand().getId());
+		carCreatedEvent.setBrandName(result.getModel().getBrand().getName());
+		this.inventoryProducer.sendMessage(carCreatedEvent);
 		
 		CreateCarResponse response = modelMapperService.forResponse().map(car, CreateCarResponse.class);
-		Model model = modelService.getModelNameByModelId(car.getModel().getId());
-		response.setModelName(model.getName());
-		
-		CarDetailDto carDetailDto = modelMapperService.forRequest().map(createRequest, CarDetailDto.class);
-		carDetailRepository.save(carDetailDto);
-		
 		return response;
 	}
 
 	@Override
 	public UpdateCarResponse update(UpdateCarRequest updateRequest) {
 		checkIfCarExistsById(updateRequest.getId());
-		checkIfModelExistById(updateRequest.getModelId());
+		checkIfModelExistsById(updateRequest.getModelId());
 		checkIfPlateExists(updateRequest.getPlate());
 		
 		Car car = modelMapperService.forRequest().map(updateRequest, Car.class);
-		car.setState(2);
-		carRepository.save(car);
+		Car result = carRepository.save(car);
+		
+		CarUpdatedEvent carUpdatedEvent = this.modelMapperService.forRequest().map(result, CarUpdatedEvent.class);
+		carUpdatedEvent.setId(result.getId());
+		carUpdatedEvent.setModelName(result.getModel().getName());
+		carUpdatedEvent.setBrandName(result.getModel().getBrand().getName());
+		this.inventoryProducer.sendMessage(carUpdatedEvent);
 		
 		UpdateCarResponse response = modelMapperService.forResponse().map(car, UpdateCarResponse.class);
 		Model model = modelService.getModelNameByModelId(car.getModel().getId());
@@ -90,42 +98,28 @@ public class CarManager implements CarService{
 	public void delete(String id) {
 		checkIfCarExistsById(id);
 		carRepository.deleteById(id);
+		CarDeletedEvent carDeletedEvent=new CarDeletedEvent();
+		carDeletedEvent.setCarId(id);		
+		this.inventoryProducer.sendMessage(carDeletedEvent);
 	}
 	
-	public void checkIfCarAvailable(String id) {
-		checkIfCarExistsById(id);
-		Car car = carRepository.findById(id).get();
-		if (car.getState() == 1) {
-			throw new BusinessException(MessagesForCar.CarDoesNotAvailable);
-		}
-	}
-	
-	public void updateCarStateForRentalCreate(String id) {
-		Car car = carRepository.findById(id).orElse(null);
-		car.setState(1);
+	@Override
+	public void updateCarState(String carId, int state) {
+		Car car = carRepository.findById(carId).get();
+		System.out.println(car.getDailyPrice());
+		car.setState(state);
 		carRepository.save(car);
 	}
 	
-	public void updateCarStateForRentalUpdate(String oldCarId, String newCarId) {
-		Car oldCar = carRepository.findById(oldCarId).orElse(null);
-		oldCar.setState(2);
-		carRepository.save(oldCar);
-		
-		Car newCar = carRepository.findById(newCarId).orElse(null);
-		newCar.setState(1);
-		carRepository.save(newCar);
-		
-//		UpdateCarStateForRentalUpdateResponse response = new UpdateCarStateForRentalUpdateResponse();
-//		response.setOldCarId(oldCar.getId());
-//		response.setOldCarState(oldCar.getState());
-//		response.setNewCarId(newCar.getId());
-//		response.setNewCarState(newCar.getState());
+	@Override
+	public void checkIfCarAvailable(String id) {
+		checkIfCarExistsById(id);
+		Car car = carRepository.findById(id).get();
+		if (car.getState() != 1) {
+			throw new BusinessException(MessagesForCar.CarDoesNotAvailable);
+		}
 	}
-	
-	/// Public Rules \\\
-	
-	
-	
+
 	/// Private Rules \\\
 	
 	private void checkIfCarExistsById(String id) {
@@ -140,7 +134,7 @@ public class CarManager implements CarService{
 		}
 	}
 	
-	private void checkIfModelExistById(String id) {
+	private void checkIfModelExistsById(String id) {
 		modelService.getModelById(id);
 	}
 	

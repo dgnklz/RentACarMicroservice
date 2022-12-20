@@ -9,5 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class InvoiceCreatedEvent {
 	private String message;
-	private String paymentId;
+	private String carId;
+	private String rentalId;
+	private double totalPrice;
 }

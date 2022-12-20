@@ -9,8 +9,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UpdatePaymentResponse {
 	private String id;
+	private double totalPrice;
 	private String rentalId;
-	private String cardNo;
 	private int status;
+	private String cardNo;
+	private String cardHolder;
 	private double balance;
 }

@@ -28,7 +28,7 @@ import lombok.AllArgsConstructor;
 public class CarController {
 	private CarService carService;
 	
-	@GetMapping("/get")
+	@GetMapping("/get/getAll")
 	public List<GetAllCarsResponse> getAll() {
 		return carService.getAll();
 	}
@@ -48,7 +48,7 @@ public class CarController {
 		carService.delete(id);
 	}
 	
-	@GetMapping("/get/{id}")
+	@GetMapping("/get/checkState/{id}")
 	public void checkIfCarAvailable(@PathVariable String id) {
 		carService.checkIfCarAvailable(id);
 	}

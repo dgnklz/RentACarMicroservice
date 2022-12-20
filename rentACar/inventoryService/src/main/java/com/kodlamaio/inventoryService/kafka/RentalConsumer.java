@@ -22,13 +22,14 @@ public class RentalConsumer {
 	public void consume(RentalCreatedEvent event) {
 		LOGGER.info(String.format("Order event received in stock service => %s", event.toString()));
 		
-		carService.updateCarStateForRentalCreate(event.getCarId());
+		carService.updateCarState(event.getCarId(), 2);
 	}
 	
 	@KafkaListener(topics = "${spring.kafka.topic.name}",groupId = "update")
 	public void consume(RentalUpdatedEvent event) {
 		LOGGER.info(String.format("Order event received in stock service => %s", event.toString()));
 		
-		carService.updateCarStateForRentalUpdate(event.getOldCarId(), event.getNewCarId());
+		carService.updateCarState(event.getOldCarId(), 1);
+		carService.updateCarState(event.getNewCarId(), 2);
 	}
 }

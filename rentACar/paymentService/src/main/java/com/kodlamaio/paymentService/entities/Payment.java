@@ -1,7 +1,5 @@
 package com.kodlamaio.paymentService.entities;
 
-import java.time.LocalDate;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -21,25 +19,21 @@ public class Payment {
 	@Column(name = "id")
 	private String id;
 	
+	@Column(name="total_price")
+	private double totalPrice;
+	
 	@Column(name = "rentalId")
 	private String rentalId;
+	
+	@Column(name = "status")
+	private int status;
 	
 	@Column(name = "cardNo")	
 	private String cardNo;
 	
 	@Column(name = "cardHolder")
 	private String cardHolder;
-
-	@Column(name = "cvv")
-	private int cvv;
 	
-	@Column(name = "cardDate")
-	private LocalDate cardDate;
-
 	@Column(name = "balance")
 	private double balance;
-	
-	@Column(name = "status")
-	private int status;
-	
 }

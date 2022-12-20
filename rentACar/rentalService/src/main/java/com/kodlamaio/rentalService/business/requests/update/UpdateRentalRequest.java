@@ -21,12 +21,10 @@ public class UpdateRentalRequest {
 	private String carId;
 	
 	@Min(1)
-	@NotBlank
 	@NotNull
 	private int rentedForDays;
 	
 	@Min(0)
-	@NotBlank
 	@NotNull
 	private double dailyPrice;
 }

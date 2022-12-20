@@ -33,3 +33,5 @@ Csrc/main/java/com/kodlamaio/rentalService/kafka/RentalProducer.java,a\6\a63ef2
 Ssrc/main/java/com/kodlamaio/rentalService/business/constants/MessagesForRental.java,c\6\c6ffb86afb43cdd3a866002a43532ee86d1f1fa4
 ‚
 Rsrc/main/java/com/kodlamaio/rentalService/business/abstracts/CarClientService.java,d\3\d34db70efafd1f66dd7139522f33d9cd35a357f2
+
+Osrc/main/java/com/kodlamaio/rentalService/api/controllers/CarClientService.java,a\c\ac927d771d9f75ee9608b6ee17ca81029699417a

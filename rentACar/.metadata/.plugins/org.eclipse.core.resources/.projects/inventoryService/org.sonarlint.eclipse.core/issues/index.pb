@@ -55,8 +55,6 @@ Qsrc/main/java/com/kodlamaio/inventoryService/business/abstracts/ModelService.ja
 Qsrc/main/java/com/kodlamaio/inventoryService/business/abstracts/BrandService.java,5\e\5e6163fbb2b7a284b575e4cba56933aeab621247
 n
 >src/main/java/com/kodlamaio/inventoryService/entities/Car.java,4\f\4f771f81f0ef15314402896e550b700383b18cb5
-Y
-)src/main/resources/application.properties,0\6\06f65155ec73600b9fc5c4dc2883d4bb84d8e284
 è
 _src/main/java/com/kodlamaio/inventoryService/business/responses/update/UpdateBrandResponse.java,7\e\7e5fb130e4d8abb99e7db34a163263769360eab0
 ç
@@ -91,3 +89,5 @@ Fsrc/main/java/com/kodlamaio/inventoryService/kafka/RentalConsumer.java,c\4\c46
 qsrc/main/java/com/kodlamaio/inventoryService/business/responses/update/UpdateCarStateForRentalCreateResponse.java,8\9\893cd07e3e3c69aa33fd82ee01213655b503c662
 °
 qsrc/main/java/com/kodlamaio/inventoryService/business/responses/update/UpdateCarStateForRentalUpdateResponse.java,e\4\e404dbf526b96226510d703e2bc48c7234ee9165
+R
+"src/main/resources/application.yml,a\6\a6d8b8556fee0e03112ce2bf34b8cb27a7dc9e58

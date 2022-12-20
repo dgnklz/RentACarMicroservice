@@ -43,7 +43,6 @@ public class RentalController {
 		return rentalService.update(updateRequest);
 	}
 	
-	
 	@DeleteMapping("delete/{id}")
 	void delete(@PathVariable String id) {
 		rentalService.delete(id);

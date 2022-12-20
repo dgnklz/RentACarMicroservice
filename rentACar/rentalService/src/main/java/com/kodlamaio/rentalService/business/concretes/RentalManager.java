@@ -1,15 +1,18 @@
 package com.kodlamaio.rentalService.business.concretes;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
+import com.kodlamaio.common.events.InvoiceCreatedEvent;
 import com.kodlamaio.common.events.RentalCreatedEvent;
 import com.kodlamaio.common.events.RentalUpdatedEvent;
 import com.kodlamaio.common.utilities.exceptions.BusinessException;
 import com.kodlamaio.common.utilities.mapping.ModelMapperService;
 import com.kodlamaio.rentalService.api.controllers.CarClientService;
+import com.kodlamaio.rentalService.api.controllers.PaymentClientService;
 import com.kodlamaio.rentalService.business.abstracts.RentalService;
 import com.kodlamaio.rentalService.business.constants.MessagesForRental;
 import com.kodlamaio.rentalService.business.requests.create.CreateRentalRequest;
@@ -19,6 +22,7 @@ import com.kodlamaio.rentalService.business.responses.get.GetAllRentalsResponse;
 import com.kodlamaio.rentalService.business.responses.update.UpdateRentalResponse;
 import com.kodlamaio.rentalService.dataAccess.RentalRepository;
 import com.kodlamaio.rentalService.entities.Rental;
+import com.kodlamaio.rentalService.kafka.InvoiceProducer;
 import com.kodlamaio.rentalService.kafka.RentalProducer;
 
 import lombok.AllArgsConstructor;
@@ -29,8 +33,10 @@ public class RentalManager implements RentalService{
 	private RentalRepository rentalRepository;
 	private ModelMapperService modelMapperService;
 	private RentalProducer rentalProducer;
-	private CarClientService carClientService;
-
+	private CarClientService carClient;
+	private PaymentClientService paymentClient;
+	private InvoiceProducer invoiceProducer;
+	
 	@Override
 	public List<GetAllRentalsResponse> getAll() {
 		List<Rental> rentals = rentalRepository.findAll();
@@ -41,30 +47,39 @@ public class RentalManager implements RentalService{
 	
 	@Override
 	public CreateRentalResponse add(CreateRentalRequest createRequest) {
-		checkIfCarIdAvailable(createRequest.getCarId());
-		carClientService.getCar(createRequest.getCarId());
+		checkIfCarAlreadyRentedById(createRequest.getCarId());
+		carClient.checkIfCarAvailable(createRequest.getCarId());
 		
 		Rental rental = modelMapperService.forRequest().map(createRequest, Rental.class);
 		rental.setId(UUID.randomUUID().toString());
+		rental.setDateStarted(LocalDateTime.now());
 		double totalPrice = (createRequest.getDailyPrice() * createRequest.getRentedForDays());
 		rental.setTotalPrice(totalPrice);
+		
+		paymentClient.add(rental.getId(), rental.getTotalPrice(), createRequest.getBalance(), createRequest.getCardHolder(), createRequest.getCardNo());
 		
 		rentalRepository.save(rental);
 		
 		RentalCreatedEvent rentalCreatedEvent = new RentalCreatedEvent();
 		rentalCreatedEvent.setCarId(rental.getCarId());
 		rentalCreatedEvent.setMessage("Rental Created");
-		this.rentalProducer.sendMessage(rentalCreatedEvent);
+		rentalProducer.sendMessage(rentalCreatedEvent);
+		
+		InvoiceCreatedEvent invoiceCreatedEvent = new InvoiceCreatedEvent();
+		invoiceCreatedEvent.setRentalId(rental.getId());
+		invoiceCreatedEvent.setCarId(rental.getCarId());
+		invoiceCreatedEvent.setTotalPrice(rental.getTotalPrice());
+		invoiceProducer.sendMessage(invoiceCreatedEvent);
+		
 		
 		CreateRentalResponse response = modelMapperService.forResponse().map(rental, CreateRentalResponse.class);
-		
 		return response;
 	}
 	
 	@Override
 	public UpdateRentalResponse update(UpdateRentalRequest updateRequest) {
 		checkIfRentalExistById(updateRequest.getId());
-		carClientService.getCar(updateRequest.getCarId());
+		carClient.checkIfCarAvailable(updateRequest.getCarId());
 		
 		Rental tempRental = rentalRepository.findById(updateRequest.getId()).get();
 		
@@ -104,16 +119,6 @@ public class RentalManager implements RentalService{
 		return rentalRepository.findById(id).get().getTotalPrice();
 	}
 	
-	@Override
-	public void setConditionByPayment(String id) {
-		Rental rental = this.rentalRepository.findById(id).get();
-		if (rental.getCondition()==1) {
-			rental.setCondition(2);	
-		}
-		rentalRepository.save(rental);
-		
-	}
-	
 	/// Private Rules \\\
 	
 	private void checkIfRentalExistById(String id) {
@@ -122,9 +127,9 @@ public class RentalManager implements RentalService{
 		}
 	}
 	
-	private void checkIfCarIdAvailable(String id) {
+	private void checkIfCarAlreadyRentedById(String id) {
 		if (rentalRepository.findByCarId(id) != null) {
-			throw new BusinessException(MessagesForRental.CarIsNotAvailable);
+			throw new BusinessException(MessagesForRental.CarAlreadyRented);
 		}
 	}
 	

@@ -1,5 +1,6 @@
 package com.kodlamaio.inventoryService.business.requests.create;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -12,12 +13,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateModelRequest {
-	@NotBlank
 	@NotNull
-	@Size(min = 2, max = 20)
+	@NotBlank
+	@Size(min = 1 ,max = 22)
 	private String name;
 	
-	@NotBlank
 	@NotNull
+	@Min(0)
 	private String brandId;
 }

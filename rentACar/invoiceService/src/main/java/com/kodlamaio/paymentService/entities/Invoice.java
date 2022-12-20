@@ -19,21 +19,12 @@ public class Invoice {
 	@Column(name = "id")
 	private String id;
 	
-	@Column(name = "paymentId")
-	private String paymentId;
+	@Column(name = "rentalId")
+	private String rentalId;
 	
-	@Column(name = "customerFirstName")
-	private String customerFirstName;
-	
-	@Column(name = "customerLastName")
-	private String customerLastName;
-
-	@Column(name = "tax")
-	private double tax;
+	@Column(name = "carId")
+	private String carId;
 	
 	@Column(name = "totalPrice")
 	private double totalPrice;
-	
-	@Column(name = "address")
-	private String address;
 }

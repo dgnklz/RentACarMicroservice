@@ -17,12 +17,22 @@ public class CreateRentalRequest {
 	private String carId;
 	
 	@Min(1)
-	@NotBlank
 	@NotNull
 	private int rentedForDays;
 	
 	@Min(0)
-	@NotBlank
 	@NotNull
 	private double dailyPrice;
+	
+	@NotBlank
+	@NotNull
+	private String cardNo;
+	
+	@NotBlank
+	@NotNull
+	private String cardHolder;
+	
+	@Min(0)
+	@NotNull
+	private double balance;
 }

@@ -27,7 +27,7 @@ public class PaymentProducer {
 		
 		Message<PaymentCreatedEvent> message = MessageBuilder
 				.withPayload(paymentCreatedEvent)
-				.setHeader(KafkaHeaders.TOPIC, topic.name()).build();		
+				.setHeader(KafkaHeaders.TOPIC, topic.name()).build();
 		kafkaTemplateCreated.send(message);
 	}
 }

@@ -4,6 +4,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,21 +14,24 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateCarRequest {
-	@Min(0)
+	@NotBlank
+	@Size(min = 1 ,max = 22)
+	private String name;
+	@NotNull
+	@Min(1)
 	private double dailyPrice;
-	
+	@NotNull
 	@Min(2015)
 	private int modelYear;
-	
-	@NotBlank
 	@NotNull
+	@NotBlank
+	@Size(min = 1 ,max = 22)
 	private String plate;
-	
-	@Min(1)
-	@Max(3)
-	private int state;
-	
-	@NotBlank
 	@NotNull
+	@Min(1)
+	@Max(2)
+	private int state;
+	@NotNull
+	@NotBlank
 	private String modelId;
 }

@@ -17,9 +17,6 @@ public interface CarService {
 	void delete(String id);
 	
 	void checkIfCarAvailable(String id);
-	
-	public void updateCarStateForRentalCreate(String id);
-	public void updateCarStateForRentalUpdate(String oldCarId, String newCarId);
-	/// Public Rules \\\
+	void updateCarState(String carId, int state);
 	
 }

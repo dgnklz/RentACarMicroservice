@@ -5,15 +5,12 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
-import com.kodlamaio.common.events.PaymentCreatedEvent;
 import com.kodlamaio.common.utilities.exceptions.BusinessException;
 import com.kodlamaio.common.utilities.mapping.ModelMapperService;
 import com.kodlamaio.paymentService.api.controllers.RentalClientService;
 import com.kodlamaio.paymentService.business.abstracts.PaymentService;
 import com.kodlamaio.paymentService.business.constants.MessagesForPayment;
-import com.kodlamaio.paymentService.business.requests.create.CreatePaymentRequest;
 import com.kodlamaio.paymentService.business.requests.update.UpdatePaymentRequest;
-import com.kodlamaio.paymentService.business.responses.create.CreatePaymentResponse;
 import com.kodlamaio.paymentService.business.responses.get.GetAllPaymentResponse;
 import com.kodlamaio.paymentService.business.responses.update.UpdatePaymentResponse;
 import com.kodlamaio.paymentService.dataAccess.PaymentRepository;
@@ -39,22 +36,28 @@ public class PaymentManager implements PaymentService{
 	}
 
 	@Override
-	public CreatePaymentResponse add(CreatePaymentRequest createRequest) {
-		checkIfRentalIdAvailable(createRequest.getRentalId());
-		checkBalanceEnough(createRequest.getBalance(), createRequest.getRentalId());
+	public void add(String rentalId, double totalPrice, double balance, String cardHolder, String cardNo) {
+		//CreatePaymentRequest createRequest = modelMapperService.forRequest().map(payMoneyRequest, CreatePaymentRequest.class);
 		
-		Payment payment = modelMapperService.forRequest().map(createRequest, Payment.class);
+		checkBalanceEnough(balance, totalPrice);
+		
+		//Payment payment = modelMapperService.forRequest().map(createRequest, Payment.class);
+		Payment payment = new Payment();
+		payment.setTotalPrice(totalPrice);
+		payment.setRentalId(rentalId);
+		payment.setCardNo(cardNo);
+		payment.setCardHolder(cardHolder);
 		payment.setId(UUID.randomUUID().toString());
 		
-		Payment createdPayment = paymentRepository.save(payment);
+		paymentRepository.save(payment);
 		
-		PaymentCreatedEvent createdEvent = new PaymentCreatedEvent();
-		createdEvent.setRentalId(createdPayment.getRentalId());
-		createdEvent.setMessage("Payment Created");
-		paymentProducer.sendMessage(createdEvent);
+		//Payment createdPayment = paymentRepository.save(payment);
 		
-		CreatePaymentResponse response = modelMapperService.forResponse().map(payment, CreatePaymentResponse.class);
-		return response;
+//		PaymentCreatedEvent createdEvent = new PaymentCreatedEvent();
+//		createdEvent.setRentalId(createdPayment.getRentalId());
+//		createdEvent.setMessage("Payment Created");
+//		paymentProducer.sendMessage(createdEvent);
+
 	}
 
 	@Override
@@ -89,8 +92,8 @@ public class PaymentManager implements PaymentService{
 		}
 	}
 	
-	private void checkBalanceEnough(double balance, String rentalId) {
-		if (balance<rentalClientService.getTotalPrice(rentalId)) {
+	private void checkBalanceEnough(double balance, double totalPrice) {
+		if (balance<totalPrice) {
 			throw new BusinessException(MessagesForPayment.BalanceNotEnough);
 		}
 	}

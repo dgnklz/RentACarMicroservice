@@ -1,5 +1,6 @@
 package com.kodlamaio.rentalService.kafka;
                                        
+
 import org.apache.kafka.clients.admin.NewTopic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
